@@ -1,6 +1,6 @@
 # Electron Application
 
-**Setting our first electron application**
+**_Setting our first electron application_**
 
 ```
 PLanning
