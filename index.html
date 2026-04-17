@@ -1,10 +1,148 @@
-<!DOCTYPE html> 
-<html lang="en"> 
-<head> 
-<meta charset="UTF-8" /> 
-<title>My Electron App</title> 
-</head> 
-<body> 
-<h1>Hello from GitHub Pages!</h1> 
-</body> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
+  <title>Productivity Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Tab navigation -->
+  <nav>
+    <button class="tab-btn active" data-tab="notes">Notes</button>
+    <button class="tab-btn"        data-tab="mood">Mood</button>
+    <button class="tab-btn"        data-tab="pomodoro">Pomodoro</button>
+    <button class="tab-btn"        data-tab="report">Report</button>
+  </nav>
+
+  <main>
+
+    <!-- ── Notes ─────────────────────────────────────────────────────────── -->
+    <section id="notes" class="tab-panel active">
+      <h2>Quick Notes</h2>
+
+      <div class="notes-compose">
+        <textarea id="notes-input" placeholder="Write a note… (Ctrl+Enter to save)" rows="3"></textarea>
+        <div class="notes-compose-actions">
+          <button id="notes-add-btn" class="btn-primary">Add Note</button>
+          <span class="notes-hint">Ctrl+Enter to save</span>
+        </div>
+      </div>
+
+      <ul id="notes-list"></ul>
+    </section>
+
+    <!-- ── Mood Tracker ───────────────────────────────────────────────────── -->
+    <section id="mood" class="tab-panel">
+      <h2>Daily Mood</h2>
+
+      <div class="mood-card">
+        <div id="mood-picker"></div>
+
+        <div class="mood-note-row">
+          <textarea id="mood-note" placeholder="Optional note… (max 140 chars)" rows="2" maxlength="140"></textarea>
+          <button id="mood-save-btn" class="btn-primary">Save</button>
+        </div>
+
+        <p id="mood-feedback" class="mood-feedback"></p>
+      </div>
+
+      <h2>Last 7 Days</h2>
+      <ul id="mood-history"></ul>
+    </section>
+
+    <!-- ── Pomodoro ───────────────────────────────────────────────────────── -->
+    <section id="pomodoro" class="tab-panel" data-phase="idle">
+      <div class="pomodoro-ring-wrapper">
+        <svg width="220" height="220" viewBox="0 0 220 220">
+          <!-- background track -->
+          <circle cx="110" cy="110" r="90" fill="none" stroke="#0f3460" stroke-width="10" />
+          <!-- progress ring -->
+          <circle id="pomodoro-ring" cx="110" cy="110" />
+        </svg>
+        <div class="pomodoro-center">
+          <span id="pomodoro-time">25:00</span>
+          <span id="pomodoro-phase">Ready</span>
+        </div>
+      </div>
+
+      <div class="pomodoro-controls">
+        <button id="pomodoro-start-work"  class="btn-primary">Start Focus</button>
+        <button id="pomodoro-start-break" class="btn-secondary">Start Break</button>
+        <button id="pomodoro-reset"       class="btn-secondary">Reset</button>
+      </div>
+
+      <!-- Fires a notification immediately — useful for testing without waiting 25 min -->
+      <button id="pomodoro-test-notify" class="btn-test-notify">🔔 Test Notification</button>
+    </section>
+
+    <!-- ── Report ────────────────────────────────────────────────────────────── -->
+    <section id="report" class="tab-panel">
+
+      <!-- Stat cards — always visible regardless of which sub-tab is active -->
+      <div class="report-stats-row">
+        <div class="report-stat-card">
+          <span id="report-hours"  class="report-stat-value">0</span>
+          <span class="report-stat-label">Hours Focused</span>
+        </div>
+        <div class="report-stat-card">
+          <span id="report-days"   class="report-stat-value">0</span>
+          <span class="report-stat-label">Days Accessed</span>
+        </div>
+        <div class="report-stat-card">
+          <span id="report-streak" class="report-stat-value">0</span>
+          <span class="report-stat-label">Day Streak</span>
+        </div>
+      </div>
+
+      <!-- Sub-tab navigation -->
+      <div class="report-subtabs">
+        <button class="report-subtab-btn active" data-subtab="report-summary">Summary</button>
+        <button class="report-subtab-btn"        data-subtab="report-detail">Detail</button>
+        <button class="report-subtab-btn"        data-subtab="report-ranking">Ranking</button>
+      </div>
+
+      <!-- Summary: bar chart with period navigation -->
+      <div id="report-summary" class="report-subpanel active">
+        <div class="report-chart-controls">
+          <button class="report-mode-btn active" data-mode="week">Week</button>
+          <button class="report-mode-btn"        data-mode="month">Month</button>
+          <div class="report-nav">
+            <button id="report-prev" class="btn-secondary report-nav-btn">&lt;</button>
+            <span   id="report-period-label" class="report-period-label"></span>
+            <button id="report-next" class="btn-secondary report-nav-btn" disabled>&gt;</button>
+          </div>
+        </div>
+        <div class="report-chart-wrapper">
+          <canvas id="report-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Detail: completed session list -->
+      <div id="report-detail" class="report-subpanel">
+        <ul id="report-session-list" class="report-session-list"></ul>
+      </div>
+
+      <!-- Ranking: gamification tier + progress -->
+      <div id="report-ranking" class="report-subpanel">
+        <div id="report-rank-container"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Script load order: storage → features → orchestrator -->
+  <script src="storage/storage.js"></script>
+  <script src="features/notes/notes.js"></script>
+  <script src="features/mood/mood.js"></script>
+  <script src="features/pomodoro/pomodoro.js"></script>
+  <script src="features/report/chart.js"></script>
+  <script src="features/report/report.js"></script>
+  <script src="renderer.js"></script>
+
+</body>
 </html>

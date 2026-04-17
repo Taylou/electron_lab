@@ -1,20 +1,53 @@
 {
-  "name": "electron",
+  "name": "productivity-dashboard",
   "version": "1.0.0",
-  "description": "Electron App",
+  "description": "A student productivity desktop app built with Electron",
   "keywords": [
     "electron",
-    "terminal"
+    "pomodoro",
+    "productivity"
   ],
   "license": "MIT",
   "author": "Taylou",
-  "type": "yes",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start":    "electron .",
+    "dist":     "electron-builder --publish never",
+    "dist:win": "electron-builder --win --publish never",
+    "dist:mac": "electron-builder --mac --publish never",
+    "test":     "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "electron": "^41.1.0"
+    "electron":         "^41.1.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId":       "com.productivity.dashboard",
+    "productName": "Productivity Dashboard",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "index.html",
+      "index.js",
+      "preload.js",
+      "renderer.js",
+      "style.css",
+      "storage/**",
+      "features/**",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target":   "dmg",
+      "category": "public.app-category.productivity"
+    },
+    "nsis": {
+      "oneClick":                        false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }
